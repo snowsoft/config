@@ -8,6 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\App;
 
 class ConfigController
 {
@@ -97,19 +98,26 @@ class ConfigController
 
     public function form()
     {
-        $form = new Form(new ConfigModel());
+           $form = new Form(new ConfigModel());
 
+     
         $form->display('id', 'ID');
+        $form->select('dil', 'İçerik Dili')->options(config('admin.extensions.config.lang', [
+            'tr-TR' => 'Türkçe',
+            'en' => 'İngilizce',
+            'ar' => 'Arapça',
+
+        ],))->rules('required')->value(App::currentLocale());
         $form->text('name')->rules('required');
         if (config('admin.extensions.config.valueEmptyStringAllowed', false)) {
-            $form->textarea('value');
+            $form->tinymce('value');
         } else {
-            $form->textarea('value')->rules('required');
+            $form->tinymce('value')->rules('required');
         }
-        $form->textarea('description');
-
-        $form->display('created_at');
-        $form->display('updated_at');
+         $form->textarea('description');
+        
+            //    $form->display('created_at');
+       // $form->display('updated_at');
 
         return $form;
     }
