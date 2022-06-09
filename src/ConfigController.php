@@ -102,17 +102,34 @@ class ConfigController
 
      
         $form->display('id', 'ID');
-        $form->select('dil', 'İçerik Dili')->options(config('admin.extensions.config.lang', [
+         $form->select('dil', 'İçerik Dili')->options(config('admin.extensions.config.lang', [
             'tr-TR' => 'Türkçe',
             'en' => 'İngilizce',
             'ar' => 'Arapça',
 
-        ],))->rules('required')->value(App::currentLocale());
+        ]))->rules('required')->value(App::currentLocale());
         $form->text('name')->rules('required');
         if (config('admin.extensions.config.valueEmptyStringAllowed', false)) {
-            $form->tinymce('value');
+            if(config('admin.extensions.config.editor', false))
+               switch (config('admin.extensions.config.editor', false)):
+                   case 'tinymce' :  $form->tinymce('value');  break;
+                  // case 'tinymce' :  $form->tinymce('value');  break;
+                //   case 'tinymce' :  $form->tinymce('value');  break;
+                   default :  $form->textarea('value'); break;
+                   endswitch;
+            else $form->textarea('value');
         } else {
-            $form->tinymce('value')->rules('required');
+
+            if(config('admin.extensions.config.editor', false))
+                switch (config('admin.extensions.config.editor', false)):
+                    case 'tinymce' :  $form->tinymce('value')->rules('required');  break;
+                    // case 'tinymce' :  $form->tinymce('value');  break;
+                    //   case 'tinymce' :  $form->tinymce('value');  break;
+                    default :  $form->textarea('value')->rules('required');; break;
+                endswitch;
+            else $form->textarea('value');
+
+
         }
          $form->textarea('description');
         
